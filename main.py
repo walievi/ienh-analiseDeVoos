@@ -89,49 +89,33 @@ def generate_pdf_report(discrepancy_summary, preliminary_insights, gap_analysis,
     pdf = PDFReport()
     pdf.add_page()
 
-    # Resumo das discrepâncias
     pdf.add_title("Resumo das Discrepâncias")
     pdf.add_paragraph(f"Voos ausentes na Empresa 2: {discrepancy_summary['counts']['missing_in_empresa_2_count']}")
     pdf.add_paragraph(f"Voos ausentes na Empresa 1: {discrepancy_summary['counts']['missing_in_empresa_1_count']}")
 
-    # Percepções preliminares
     pdf.add_title("Percepções Preliminares")
     pdf.add_paragraph("Operadores com maior número de voos ausentes:")
     pdf.add_image("Operadores - Empresa 1", image_paths[0])
     pdf.add_image("Operadores - Empresa 2", image_paths[1])
 
-    # Análise das lacunas
     pdf.add_title("Análise das Lacunas")
     pdf.add_image("Rotas mais ausentes na Empresa 2", image_paths[2])
     pdf.add_image("Rotas mais ausentes na Empresa 1", image_paths[3])
 
-    # Detalhamento das características
     pdf.add_title("Detalhamento das Características Comuns")
     pdf.add_table("Detalhes de Rotas - Empresa 1", discrepancy_details["empresa_1_routes_details"].reset_index())
     pdf.add_table("Detalhes de Rotas - Empresa 2", discrepancy_details["empresa_2_routes_details"].reset_index())
 
-    # Salvar o PDF
     pdf.output(output_path)
     print(f"Relatório gerado: {output_path}")
 
 
-# Inicializar a classe DataHandler
 handler = DataHandler()
 
-# Gerar resumo das discrepâncias
 discrepancy_summary = DiscrepancySummary(handler).generate_summary()
-
-# Percepções preliminares sobre voos ausentes/adicionais
 preliminary_insights = PreliminaryInsights(discrepancy_summary).analyze()
-
-# Análise das lacunas identificadas
 gap_analysis = GapAnalysis(discrepancy_summary).analyze()
-
-# Detalhamento das características comuns dos dados discrepantes
 discrepancy_details = DiscrepancyDetails(gap_analysis).get_details()
-
-# Gerar gráficos e salvar temporariamente
 image_paths = generate_graphs(preliminary_insights, gap_analysis)
 
-# Gerar o relatório em PDF
 generate_pdf_report(discrepancy_summary, preliminary_insights, gap_analysis, discrepancy_details, image_paths, output_path="report.pdf")
